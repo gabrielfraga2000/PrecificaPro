@@ -20,6 +20,7 @@ export const usePriceCalculator = (
     }
 
     // 1. Valor Residual (R) = Vv - Ve
+    // Usamos SafeMath apenas para a subtração inicial para garantir precisão nos centavos da entrada
     const residual = SafeMath.subtract(spotValue, downPayment);
 
     // If fully paid by down payment
@@ -43,26 +44,29 @@ export const usePriceCalculator = (
       }
     }
 
-    // 3. Cálculo teórico dos componentes
-    const interestAmount = SafeMath.multiply(residual, interestRate);
-    const taxAmount = SafeMath.multiply(interestAmount, TAX_RATE);
+    // 3. Cálculo Financeiro de Alta Precisão (Float puro para intermediários)
+    // Evitamos arredondar Juros e Impostos individualmente para não acumular erro de centavos.
     
-    // Total Teórico (Ex: 1162.00)
-    const theoreticalTotal = SafeMath.add(residual, interestAmount, taxAmount);
+    // Juros (I)
+    const interestAmount = residual * interestRate;
+    
+    // Imposto sobre Juros (T)
+    const taxAmount = interestAmount * TAX_RATE;
 
-    // 4. Definição da Parcela (A Verdade Visual)
-    // Dividimos o teórico e arredondamos para 2 casas.
-    // Ex: 1162 / 13 = 89.3846... -> Arredonda para 89.38
-    const rawInstallment = SafeMath.divide(theoreticalTotal, installments);
-    const installmentValue = Math.round(rawInstallment * 100) / 100;
+    // 4. Valor Total Financiado (Passar na Maquininha)
+    // O valor na maquininha é a soma exata: Residual + Juros + Imposto.
+    // Só arredondamos AGORA, no final, para 2 casas decimais.
+    const rawTotalFinanced = residual + interestAmount + taxAmount;
+    const totalFinanced = Math.round(rawTotalFinanced * 100) / 100;
 
-    // 5. Definição do Total da Maquininha (A Verdade Matemática)
-    // Recalculamos o total baseado na parcela arredondada para garantir consistência.
-    // Ex: 89.38 * 13 = 1161.94 (e não mais 1162.00)
-    const totalFinanced = SafeMath.multiply(installmentValue, installments);
+    // 5. Valor da Parcela (Referência)
+    // O valor da parcela é derivado do Total já arredondado.
+    // Nota: O ResultCard vai formatar isso, mas matematicamente pode ter dízimas.
+    // A prioridade é o totalFinanced estar correto.
+    const installmentValue = totalFinanced / installments;
 
     // 6. Valor Total Final (Cliente)
-    const totalFinal = SafeMath.add(downPayment, totalFinanced);
+    const totalFinal = downPayment + totalFinanced;
 
     return {
       installmentValue,

@@ -12,6 +12,7 @@ interface InputGroupProps {
   step?: string;
   error?: boolean;
   placeholder?: string;
+  inputMode?: "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url";
 }
 
 export const InputGroup: React.FC<InputGroupProps> = ({
@@ -19,13 +20,14 @@ export const InputGroup: React.FC<InputGroupProps> = ({
   id,
   value,
   onChange,
-  type = "number",
+  type = "text",
   prefix,
   min,
   max,
   step,
   error,
-  placeholder
+  placeholder,
+  inputMode = "decimal"
 }) => {
   return (
     <div className="flex flex-col gap-1 w-full">
@@ -39,6 +41,7 @@ export const InputGroup: React.FC<InputGroupProps> = ({
         <input
           id={id}
           type={type}
+          inputMode={inputMode}
           value={value}
           onChange={onChange}
           min={min}

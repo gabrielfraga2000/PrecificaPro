@@ -25,6 +25,12 @@ const App: React.FC = () => {
     setInstallments(1);
   };
 
+  const handleCurrencyChange = (setter: (val: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Allow digits, commas, and dots. Remove other characters.
+    const value = e.target.value.replace(/[^0-9,.]/g, '');
+    setter(value);
+  };
+
   return (
     <div className="min-h-screen bg-[#121212] flex items-center justify-center p-2 font-sans">
       <main className="w-full max-w-md bg-[#353535] rounded-2xl shadow-2xl shadow-black/50 overflow-hidden border border-[#545454]">
@@ -59,9 +65,8 @@ const App: React.FC = () => {
               label="Valor à Vista"
               prefix="R$"
               value={spotValueStr}
-              onChange={(e) => setSpotValueStr(e.target.value)}
-              placeholder="0.00"
-              step="0.01"
+              onChange={handleCurrencyChange(setSpotValueStr)}
+              placeholder="0,00"
             />
 
             {/* Down Payment Input */}
@@ -71,9 +76,8 @@ const App: React.FC = () => {
                 label="Valor de Entrada"
                 prefix="R$"
                 value={downPaymentStr}
-                onChange={(e) => setDownPaymentStr(e.target.value)}
-                placeholder="0.00"
-                step="0.01"
+                onChange={handleCurrencyChange(setDownPaymentStr)}
+                placeholder="0,00"
                 error={hasError}
               />
               {hasError && (
