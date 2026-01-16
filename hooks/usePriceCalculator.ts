@@ -43,29 +43,25 @@ export const usePriceCalculator = (
       }
     }
 
-    // 3. Valor dos Juros (I) = R * i
+    // 3. Cálculo teórico dos componentes
     const interestAmount = SafeMath.multiply(residual, interestRate);
-
-    // 4. Valor do Imposto (T) = I * 0.08
     const taxAmount = SafeMath.multiply(interestAmount, TAX_RATE);
-
-    // 5. Valor Total Parcelado Calculado (Vf_calc) = R + I + T
-    const calculatedTotalFinanced = SafeMath.add(residual, interestAmount, taxAmount);
-
-    // 6. Valor da Parcela
-    // Dividimos o total calculado pelo número de parcelas
-    const rawInstallment = SafeMath.divide(calculatedTotalFinanced, installments);
     
-    // Arredondamos para 2 casas decimais para corresponder ao valor monetário real que será exibido
-    // Isso garante que (Parcela * N) seja igual ao Total exibido
+    // Total Teórico (Ex: 1162.00)
+    const theoreticalTotal = SafeMath.add(residual, interestAmount, taxAmount);
+
+    // 4. Definição da Parcela (A Verdade Visual)
+    // Dividimos o teórico e arredondamos para 2 casas.
+    // Ex: 1162 / 13 = 89.3846... -> Arredonda para 89.38
+    const rawInstallment = SafeMath.divide(theoreticalTotal, installments);
     const installmentValue = Math.round(rawInstallment * 100) / 100;
 
-    // 7. Recalcular Total Financiado (Passar na Maquininha)
-    // Sobrescrevemos o valor calculado inicialmente para garantir consistência matemática visual:
-    // Total = Parcela Arredondada * Numero de Parcelas
+    // 5. Definição do Total da Maquininha (A Verdade Matemática)
+    // Recalculamos o total baseado na parcela arredondada para garantir consistência.
+    // Ex: 89.38 * 13 = 1161.94 (e não mais 1162.00)
     const totalFinanced = SafeMath.multiply(installmentValue, installments);
 
-    // 8. Valor Total Final = Entrada + Total Parcelado (Ajustado)
+    // 6. Valor Total Final (Cliente)
     const totalFinal = SafeMath.add(downPayment, totalFinanced);
 
     return {

@@ -30,8 +30,7 @@ export class SafeMath {
 
   static divide(amount: number, divisor: number): number {
     if (divisor === 0) return 0;
-    // Division for installments usually requires ceiling or standard rounding depending on business logic.
-    // Standard approach: normal division
+    // Returns standard float division
     return amount / divisor; 
   }
 }
@@ -44,8 +43,14 @@ export const formatCurrency = (value: number): string => {
 };
 
 export const parseCurrencyInput = (value: string): number => {
-  // Remove non-numeric characters except dot/comma
-  // This is a basic parser. For robust apps, a masking library is recommended.
   if (!value) return 0;
-  return parseFloat(value);
+  
+  // Handle Brazilian format (1.000,00 -> 1000.00)
+  // 1. Remove dots (thousands separators)
+  // 2. Replace comma with dot (decimal separator)
+  let cleanValue = value.replace(/\./g, '').replace(',', '.');
+  
+  // Validation to prevent NaN
+  const parsed = parseFloat(cleanValue);
+  return isNaN(parsed) ? 0 : parsed;
 };
