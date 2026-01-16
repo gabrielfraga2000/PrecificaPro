@@ -1,0 +1,5 @@
+{
+  "name": "PrecificaPro - Calculadora Dinâmica",
+  "description": "Calculadora de precificação dinâmica para lojistas, com cálculo de juros progressivos e tributação, focada em dispositivos móveis.",
+  "requestFramePermissions": []
+}
