@@ -11,12 +11,14 @@
           extend: {
             colors: {
               brand: {
-                50: '#f0f9ff',
-                100: '#e0f2fe',
-                500: '#0ea5e9',
-                600: '#0284c7',
-                700: '#0369a1',
-                900: '#0c4a6e',
+                50: '#f7ffeb',  /* Very light lime tint */
+                100: '#b2ff51', /* Color 1: Lime - Used for highlights/text */
+                200: '#ffffff', /* White - Used for secondary text */
+                500: '#b2ff51', /* Color 1: Lime - Used for borders/focus */
+                600: '#545454', /* Color 2: Grey - Used for borders/inactive */
+                700: '#353535', /* Color 3: Dark Grey - Main Card Background */
+                800: '#262626', /* Darker input background */
+                900: '#121212', /* Global Background */
               }
             }
           }
@@ -47,7 +49,7 @@
 }
 </script>
 </head>
-  <body class="bg-slate-50 text-slate-900 antialiased">
+  <body class="bg-brand-900 text-brand-200 antialiased selection:bg-brand-500 selection:text-brand-900">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

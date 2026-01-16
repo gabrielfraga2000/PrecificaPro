@@ -49,13 +49,23 @@ export const usePriceCalculator = (
     // 4. Valor do Imposto (T) = I * 0.08
     const taxAmount = SafeMath.multiply(interestAmount, TAX_RATE);
 
-    // 5. Valor Total Parcelado (Vf) = R + I + T
-    const totalFinanced = SafeMath.add(residual, interestAmount, taxAmount);
+    // 5. Valor Total Parcelado Calculado (Vf_calc) = R + I + T
+    const calculatedTotalFinanced = SafeMath.add(residual, interestAmount, taxAmount);
 
-    // 6. Valor da Parcela = Vf / n
-    const installmentValue = SafeMath.divide(totalFinanced, installments);
+    // 6. Valor da Parcela
+    // Dividimos o total calculado pelo número de parcelas
+    const rawInstallment = SafeMath.divide(calculatedTotalFinanced, installments);
+    
+    // Arredondamos para 2 casas decimais para corresponder ao valor monetário real que será exibido
+    // Isso garante que (Parcela * N) seja igual ao Total exibido
+    const installmentValue = Math.round(rawInstallment * 100) / 100;
 
-    // 7. Valor Total Final = Entrada + Total Parcelado
+    // 7. Recalcular Total Financiado (Passar na Maquininha)
+    // Sobrescrevemos o valor calculado inicialmente para garantir consistência matemática visual:
+    // Total = Parcela Arredondada * Numero de Parcelas
+    const totalFinanced = SafeMath.multiply(installmentValue, installments);
+
+    // 8. Valor Total Final = Entrada + Total Parcelado (Ajustado)
     const totalFinal = SafeMath.add(downPayment, totalFinanced);
 
     return {
