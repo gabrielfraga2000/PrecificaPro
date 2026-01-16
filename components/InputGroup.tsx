@@ -11,6 +11,7 @@ interface InputGroupProps {
   max?: string | number;
   step?: string;
   error?: boolean;
+  placeholder?: string;
 }
 
 export const InputGroup: React.FC<InputGroupProps> = ({
@@ -23,7 +24,8 @@ export const InputGroup: React.FC<InputGroupProps> = ({
   min,
   max,
   step,
-  error
+  error,
+  placeholder
 }) => {
   return (
     <div className="flex flex-col gap-1.5 w-full">
@@ -43,7 +45,7 @@ export const InputGroup: React.FC<InputGroupProps> = ({
           max={max}
           step={step}
           className="w-full bg-transparent py-3 px-3 text-lg font-bold text-slate-800 placeholder-slate-300 focus:outline-none"
-          placeholder="0,00"
+          placeholder={placeholder || "0,00"}
         />
       </div>
     </div>
